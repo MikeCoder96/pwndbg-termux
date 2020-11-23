@@ -68,7 +68,7 @@ install_emerge() {
 }
 
 #android termux platform
-platform=$(uname -0)
+platform=$(uname -o)
 machine=$(uname -m)
 
 PYTHON=''
