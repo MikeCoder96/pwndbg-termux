@@ -30,11 +30,8 @@ install_apt() {
 #termux pkg
 install_pkg() {
     pkg update || true
-    pkg install -y git gdb python2
+    pkg install -y git gdb python unicorn openssl 
 
-    if uname -m | grep x86_64 > /dev/null; then
-        apt-get -y install libc6-dbg:i386 || true
-    fi
 }
 
 install_dnf() {
@@ -68,8 +65,7 @@ install_emerge() {
 }
 
 #android termux platform
-platform=$(uname -o)
-machine=$(uname -m)
+platform=$(uname -o | tr '[:upper:]' '[:lower:]')
 
 PYTHON=''
 INSTALLFLAGS=''
@@ -77,7 +73,7 @@ INSTALLFLAGS=''
 if osx || [ "$1" == "--user" ]; then
     INSTALLFLAGS="--user"
 else
-	if [ $platform  == "Android" ] && [ $machine == "aarch64"]; then
+	if [ $platform  == "android" ]; then
 		PYTHON=""
 	else
 		PYTHON="sudo "
@@ -85,62 +81,60 @@ else
 fi
 
 if linux; then
-    distro=$(grep "^ID=" /etc/os-release | cut -d'=' -f2 | sed -e 's/"//g')
-	
-	if [ $platform  == "Android" ] && [ $machine == "aarch64"]; then
-		install_pkg		
-	else
-	
-		case $distro in
-			"ubuntu")
+    distro=$(grep "^ID=" /etc/os-release | cut -d'=' -f2 | sed -e 's/"//g') || $(uname -o | tr '[:upper:]' '[:lower:]')
+              
+	case $distro in
+		"android")
+			install_pkg
+			;;	
+		"ubuntu")
+			install_apt
+			;;
+		"fedora")
+			install_dnf
+			;;
+		"clear-linux-os")
+			install_swupd
+			;;
+		"opensuse-leap")
+			install_zypper
+			;;
+		"arch")
+			echo "Install Arch linux using a community package. See:"
+			echo " - https://www.archlinux.org/packages/community/any/pwndbg/"
+			echo " - https://aur.archlinux.org/packages/pwndbg-git/"
+			exit 1
+			;;
+		"manjaro")
+			echo "Pwndbg is not avaiable on Manjaro's repositories."
+			echo "But it can be installed using Arch's AUR community package. See:"
+			echo " - https://www.archlinux.org/packages/community/any/pwndbg/"
+			echo " - https://aur.archlinux.org/packages/pwndbg-git/"
+			exit 1
+			;;
+		"void")
+			install_xbps
+			;;
+		"gentoo")
+			install_emerge
+			if ! hash sudo 2>/dev/null && whoami | grep root; then
+				sudo() {
+					$*
+				}
+			fi
+			;;
+		*) # we can add more install command for each distros.
+			echo "\"$distro\" is not supported distro. Will search for 'apt' or 'dnf' package managers."
+			if hash apt; then
 				install_apt
-				;;
-			"fedora")
+			elif hash dnf; then
 				install_dnf
-				;;
-			"clear-linux-os")
-				install_swupd
-				;;
-			"opensuse-leap")
-				install_zypper
-				;;
-			"arch")
-				echo "Install Arch linux using a community package. See:"
-				echo " - https://www.archlinux.org/packages/community/any/pwndbg/"
-				echo " - https://aur.archlinux.org/packages/pwndbg-git/"
-				exit 1
-				;;
-			"manjaro")
-				echo "Pwndbg is not avaiable on Manjaro's repositories."
-				echo "But it can be installed using Arch's AUR community package. See:"
-				echo " - https://www.archlinux.org/packages/community/any/pwndbg/"
-				echo " - https://aur.archlinux.org/packages/pwndbg-git/"
-				exit 1
-				;;
-			"void")
-				install_xbps
-				;;
-			"gentoo")
-				install_emerge
-				if ! hash sudo 2>/dev/null && whoami | grep root; then
-					sudo() {
-						$*
-					}
-				fi
-				;;
-			*) # we can add more install command for each distros.
-				echo "\"$distro\" is not supported distro. Will search for 'apt' or 'dnf' package managers."
-				if hash apt; then
-					install_apt
-				elif hash dnf; then
-					install_dnf
-				else
-					echo "\"$distro\" is not supported and your distro don't have apt or dnf that we support currently."
-					exit
-				fi
-				;;
-		esac
-	fi
+			else
+				echo "\"$distro\" is not supported and your distro don't have apt or dnf that we support currently."
+				exit
+			fi
+			;;
+	esac
 fi
 
 if ! hash gdb; then
