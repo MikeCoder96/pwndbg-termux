@@ -30,9 +30,10 @@ install_apt() {
 #termux pkg
 install_pkg() {
     pkg update || true
-    pkg install -y git gdb python unicorn openssl 
+    pkg install -y git python gdb unicorn openssl 
 
 }
+#end termux pkg
 
 install_dnf() {
     sudo dnf update || true
@@ -81,8 +82,12 @@ else
 fi
 
 if linux; then
-    distro=$(grep "^ID=" /etc/os-release | cut -d'=' -f2 | sed -e 's/"//g') || $(uname -o | tr '[:upper:]' '[:lower:]')
-              
+    distro=$(grep "^ID=" /etc/os-release | cut -d'=' -f2 | sed -e 's/"//g') 
+
+	if [ -z "$distro" ]; then
+		distro=$(uname -o | tr '[:upper:]' '[:lower:]')
+	fi
+	
 	case $distro in
 		"android")
 			install_pkg
