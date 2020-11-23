@@ -1,4 +1,4 @@
-# pwndbg [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/pwndbg/pwndbg/blob/dev/LICENSE.md) [![IRC](https://img.shields.io/badge/freenode-%23pwndbg-red.svg)](https://webchat.freenode.net/?channels=#pwndbg)
+# pwndbg "Termux support" [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/pwndbg/pwndbg/blob/dev/LICENSE.md) [![IRC](https://img.shields.io/badge/freenode-%23pwndbg-red.svg)](https://webchat.freenode.net/?channels=#pwndbg)
 
 `pwndbg` (/poʊndbæg/) is a GDB plug-in that makes debugging with GDB suck less, with a focus on features needed by low-level software developers, hardware hackers, reverse-engineers and exploit developers.
 
@@ -36,6 +36,17 @@ cd pwndbg
 ```
 
 If you use any other Linux distribution, we recommend using the latest available GDB built from source.  Be sure to pass `--with-python=/path/to/python` to `configure`.
+
+## How "Termux"?
+
+```
+pkg update
+pkg upgrade
+pkg install git
+git clone https://github.com/MikeCoder96/pwndbg
+cd pwndbg
+./setup.sh
+```
 
 ## What can I do with that?
 
