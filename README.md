@@ -25,7 +25,7 @@ Pwndbg exists not only to replace all of its predecessors, but also to have a cl
 [GEF]: https://github.com/hugsy/gef
 [gef.py]: https://github.com/hugsy/gef/blob/master/gef.py
 
-## How?
+## How? "Desktop Version"
 
 Installation is straightforward.  Pwndbg is best supported on Ubuntu 14.04 with GDB 7.7, and Ubuntu 16.04 with GDB 7.11.  
 
